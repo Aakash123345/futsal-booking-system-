@@ -16,7 +16,7 @@ public class DbConnection {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             // Change 'root' and '' to your MySQL username and password
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/travel_db", "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/futsal_db", "root", "Aakirti@123456789");
             return con;
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());

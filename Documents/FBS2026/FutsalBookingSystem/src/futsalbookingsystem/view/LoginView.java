@@ -4,6 +4,9 @@
  */
 package futsalbookingsystem.view;
 
+import futsalbookingsystem.dao.UserDao;
+
+
 /**
  *
  * @author aakirti
@@ -15,7 +18,25 @@ public class LoginView extends javax.swing.JFrame {
      */
     public LoginView() {
         initComponents();
+        setupPlaceholder(txtUsername, "Name");
+        setupPlaceholder(txtPassword, "Password");
     }
+    private void setupPlaceholder(javax.swing.JTextField field, String placeholder) {
+    field.addFocusListener(new java.awt.event.FocusAdapter() {
+        @Override
+        public void focusGained(java.awt.event.FocusEvent evt) {
+            if (field.getText().equals(placeholder)) {
+                field.setText("");
+            }
+        }
+        @Override
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            if (field.getText().isEmpty()) {
+                field.setText(placeholder);
+            }
+        }
+    });
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,6 +64,7 @@ public class LoginView extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         jLabel2.setText("Login Your Account");
 
+        txtUsername.setText("Name");
         txtUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsernameActionPerformed(evt);
@@ -121,21 +143,23 @@ public class LoginView extends javax.swing.JFrame {
         // TODO add your handling code here:
         String username = txtUsername.getText();
         String password = txtPassword.getText();
+    
+    // Check if fields are empty OR still contain placeholder text
+        if (username.isEmpty() || username.equals("Name") || 
+            password.isEmpty() || password.equals("Password")) {
         
-        if (username.equals("admin")&& password.equals("1234")){
-            DashboardView DV = new DashboardView();
-            DV.setVisible(true);
-            this.dispose();
-        }
-        else if (username.isEmpty() || password.isEmpty()){
-            javax.swing.JOptionPane.showMessageDialog(this, "please enter both username and password");
-        }else{
-            javax.swing.JOptionPane.showMessageDialog(this, "Invalid Username or password","Login error",javax.swing.JOptionPane.ERROR_MESSAGE);
-            
-            txtUsername.setText("");
-            txtPassword.setText("");
-            txtUsername.requestFocus();
-            
+            javax.swing.JOptionPane.showMessageDialog(this, "Please enter both username and password");
+        } else {
+        // Call the UserDao to check the database
+            futsalbookingsystem.dao.UserDao dao = new futsalbookingsystem.dao.UserDao();
+        
+            if (dao.checkLogin(username, password)) {
+                DashboardView DV = new DashboardView();
+                DV.setVisible(true);
+                this.dispose();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Invalid Username or password", "Login error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
         }
         
     }//GEN-LAST:event_jButton1ActionPerformed

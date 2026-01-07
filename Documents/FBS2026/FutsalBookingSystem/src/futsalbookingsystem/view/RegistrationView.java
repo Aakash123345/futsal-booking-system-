@@ -4,6 +4,8 @@
  */
 package futsalbookingsystem.view;
 
+import futsalbookingsystem.dao.UserDao;
+
 /**
  *
  * @author aakirti
@@ -15,7 +17,29 @@ public class RegistrationView extends javax.swing.JFrame {
      */
     public RegistrationView() {
         initComponents();
+        setupPlaceholder(jTextField1, "Enter your name");
+        setupPlaceholder(jTextField2, "Email");
+        setupPlaceholder(jTextField3, "Phone Number");
+        setupPlaceholder(jTextField4, "Password");
     }
+    private void setupPlaceholder(javax.swing.JTextField field, String placeholder) {
+    field.addFocusListener(new java.awt.event.FocusAdapter() {
+        @Override
+        public void focusGained(java.awt.event.FocusEvent evt) {
+            if (field.getText().equals(placeholder)) {
+                field.setText("");
+            }
+        }
+        @Override
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            if (field.getText().isEmpty()) {
+                field.setText(placeholder);
+            }
+        }
+    });
+}
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -131,9 +155,36 @@ public class RegistrationView extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        DashboardView DV = new DashboardView();
-        DV.show();
-        dispose();
+        String name = jTextField1.getText();
+        String email = jTextField2.getText();
+        String phone = jTextField3.getText();
+        String pass = jTextField4.getText();
+
+    // 2. Strict Validation: Check for empty fields OR placeholder text
+        if (name.isEmpty() || name.equals("Enter your name") || 
+            email.isEmpty() || email.equals("Email") || 
+            phone.isEmpty() || phone.equals("Phone Number") || 
+            pass.isEmpty() || pass.equals("Password")) {
+        
+            javax.swing.JOptionPane.showMessageDialog(this, "Please fill in all fields with your actual information.");
+            return;
+        }
+
+    // 3. Create the UserData object
+        futsalbookingsystem.model.UserData user = new futsalbookingsystem.model.UserData(name, email, phone, pass);
+
+    // 4. Call the UserDao to save to MySQL
+        futsalbookingsystem.dao.UserDao dao = new futsalbookingsystem.dao.UserDao();
+        if (dao.registerUser(user)) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Registration Successful!");
+            new LoginView().setVisible(true);
+            this.dispose();
+        } else {
+        // If it fails now, it is likely a database connection or SQL column name issue
+            javax.swing.JOptionPane.showMessageDialog(this, "Registration Failed. Check if the database is running or the email is already used.");
+        }
+       
+       
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
