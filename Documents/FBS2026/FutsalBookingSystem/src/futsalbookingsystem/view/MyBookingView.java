@@ -19,15 +19,24 @@ import javax.swing.JOptionPane;
  */
 public class MyBookingView extends javax.swing.JFrame {
     private String loggedInUser;
+    private boolean isEditing = false;
+    private String editingID = "";
 
     /**
      * Creates new form MyBookingView
      */
-    public MyBookingView(String timeSlot, String courtName, String username) {
+    public MyBookingView(String bId,String timeSlot, String courtName, String username) {
         initComponents();
         populateDates(); // <--- Add this
         populateTimes();
         this.loggedInUser = username;
+        
+        
+        if (bId != null && !bId.isEmpty()) {
+            this.isEditing = true;
+            this.editingID = bId;
+        jButton6.setText("Update Booking"); // Change button text
+        }
         
         jComboBox4.removeAllItems();
         jComboBox4.addItem("1 Hour");
@@ -38,10 +47,12 @@ public class MyBookingView extends javax.swing.JFrame {
         
         // Auto-fill the Time Slot in jComboBox3
         // Note: Make sure the text in your DB matches the items in your ComboBox exactly
-        jComboBox3.setSelectedItem(timeSlot); 
+        jComboBox3.setSelectedItem(timeSlot);
+        jComboBox4.setSelectedIndex(0);
         
         // Optional: Make the court field uneditable so they don't change it by mistake
-        jTextField1.setEditable(false);
+        jTextField1.setEditable(true);
+        this.loggedInUser = "Guest";
         
         updatePrice();
     }
@@ -341,6 +352,21 @@ public class MyBookingView extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        int response = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout Confirmation", 
+            javax.swing.JOptionPane.YES_NO_OPTION, 
+            javax.swing.JOptionPane.QUESTION_MESSAGE);
+
+    // 2. If user clicks "Yes"
+        if (response == javax.swing.JOptionPane.YES_OPTION) {
+        // Replace 'LoginView' with the actual name of your Login JFrame class
+            LoginView login = new LoginView(); 
+            login.setVisible(true);
+        
+        // 3. Close the current Dashboard
+            this.dispose(); 
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -363,55 +389,57 @@ public class MyBookingView extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        java.util.Random rand = new java.util.Random();
-        int randomId = rand.nextInt(1000) + 240; 
-        String bookingID = String.valueOf(randomId);
         
+        
+
         String date = jComboBox2.getSelectedItem().toString();
-        String startTime = jComboBox3.getSelectedItem().toString();
         String court = jTextField1.getText();
-        String duration = jComboBox4.getSelectedItem().toString();
         String price = jLabel6.getText();
         String name = (this.loggedInUser != null) ? this.loggedInUser : "Guest";
-        
-        
-        
-        
+    
+    // Generate a new ID only if we aren't editing
+        int randomId = new java.util.Random().nextInt(1000) + 240; 
+        String bookingID = isEditing ? editingID : String.valueOf(randomId);
 
-    // Show a success message
         try (Connection conn = DbConnection.getConnection()) {
             if (conn == null) {
-                JOptionPane.showMessageDialog(this, "Database connection failed! Is MySQL turned on?");
+                JOptionPane.showMessageDialog(this, "Database connection failed!");
                 return;
+                }
+
+            String sql;
+            if (isEditing) {
+            // Parameters: 1:name, 2:court, 3:date, 4:price, 5:ID
+                sql = "UPDATE bookings SET customer_name = ?, court_no = ?, booking_date = ?, total_price = ? WHERE booking_id = ?";
+            } else {
+            // Parameters: 1:name, 2:court, 3:date, 4:price, 5:ID
+                sql = "INSERT INTO bookings (customer_name, court_no, booking_date, total_price, booking_id) VALUES (?, ?, ?, ?, ?)";
             }
 
-        // SQL Query - Ensure these column names match your MySQL table exactly
-            String sql = "INSERT INTO bookings (booking_id, customer_name, court_no, booking_date, total_price) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pst = conn.prepareStatement(sql);
         
-            pst.setInt(1, randomId);      // Sets the ID
-            pst.setString(2, name);       // Sets Name
-            pst.setString(3, court);      // Sets Court
-            pst.setString(4, date);       // Sets Date
-            pst.setString(5, price);      // Sets Total Price
+        // SETTING PARAMETERS (MUST MATCH THE SQL ORDER)
+            pst.setString(1, name);      // customer_name
+            pst.setString(2, court);     // court_no
+            pst.setString(3, date);      // booking_date
+            pst.setString(4, price);     // total_price
+            pst.setString(5, bookingID); // booking_id (The WHERE clause or the last VALUE)
 
             int rowsAffected = pst.executeUpdate();
         
             if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(this, "Booking Successful! Saved to Database.");
+                String msg = isEditing ? "Booking Updated Successfully!" : "Booking Successful!";
+                JOptionPane.showMessageDialog(this, msg);
             
-            // 4. Open BookingConfirmedView and pass the data
-            // Ensure your BookingConfirmedView constructor matches these 5 arguments
+            // Open Confirmation View
                 BookingConfirmedView confirmed = new BookingConfirmedView(bookingID, name, court, date, price);
                 confirmed.setVisible(true);
-            
-            // 5. Close this current booking window
                 this.dispose();
             }
         } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
         } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "General Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     
     // Go back to the Schedule
@@ -453,7 +481,7 @@ public class MyBookingView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MyBookingView("","","").setVisible(true);
+                new MyBookingView("","","","").setVisible(true);
             }
         });
     }

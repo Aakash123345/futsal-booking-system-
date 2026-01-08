@@ -4,6 +4,13 @@
  */
 package futsalbookingsystem.view;
 
+import futsalbookingsystem.database.DbConnection;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author aakirti
@@ -15,6 +22,65 @@ public class AdminView extends javax.swing.JFrame {
      */
     public AdminView() {
         initComponents();
+        loadTableData();
+        updateDashboardStats();
+        
+        
+        
+        
+        
+        
+    }
+    
+    public void updateDashboardStats() {
+    try (Connection conn = DbConnection.getConnection()) {
+        // 1. Count Pending Bookings
+        String pendingQuery = "SELECT COUNT(*) AS total FROM bookings"; // You can add 'WHERE status=pending' if you have that column
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(pendingQuery);
+        
+        if (rs.next()) {
+            int count = rs.getInt("total");
+            jLabel5.setText(String.valueOf(count)); // Update the "7" to real count
+        }
+
+        // 2. Count Total Users
+        String userQuery = "SELECT COUNT(*) AS total FROM users"; 
+        ResultSet rsUsers = st.executeQuery(userQuery);
+        if (rsUsers.next()) {
+            jLabel7.setText(String.valueOf(rsUsers.getInt("total"))); // Update the "128"
+        }
+        
+    } catch (Exception e) {
+        System.out.println("Stat Error: " + e.getMessage());
+    }
+}
+    
+    public void loadTableData() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // Clear the table first
+
+        try {
+            Connection conn = DbConnection.getConnection();
+            Statement st = conn.createStatement();
+            String query = "SELECT * FROM bookings";
+            ResultSet rs = st.executeQuery(query);
+
+            while (rs.next()) {
+                String id = rs.getString("booking_id");
+                String name = rs.getString("customer_name"); // Added name to view who booked
+                String court = rs.getString("court_no");
+                String date = rs.getString("booking_date");
+                String price = rs.getString("total_price");
+
+            // Add row to table model
+                model.addRow(new Object[]{id, name, court, date, price});
+            }
+            conn.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading data: " + e.getMessage());
+        }
+        jTable1.setDefaultEditor(Object.class, null);
     }
 
     /**
@@ -139,7 +205,7 @@ public class AdminView extends javax.swing.JFrame {
         jLabel1.setText("Total Courts");
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
-        jLabel2.setText("3");
+        jLabel2.setText("2");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -241,13 +307,13 @@ public class AdminView extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Booking ID", "Customer Name", "Court No. Status"
+                "Booking ID", "Name", "Court No.", "Date", "Time"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -260,15 +326,20 @@ public class AdminView extends javax.swing.JFrame {
         });
 
         jButton7.setText("Cancel Booking");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -281,10 +352,10 @@ public class AdminView extends javax.swing.JFrame {
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -295,6 +366,21 @@ public class AdminView extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        int response = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout Confirmation", 
+            javax.swing.JOptionPane.YES_NO_OPTION, 
+            javax.swing.JOptionPane.QUESTION_MESSAGE);
+
+    // 2. If user clicks "Yes"
+    if (response == javax.swing.JOptionPane.YES_OPTION) {
+        // Replace 'LoginView' with the actual name of your Login JFrame class
+        LoginView login = new LoginView(); 
+        login.setVisible(true);
+        
+        // 3. Close the current Dashboard
+        this.dispose(); 
+    }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -314,14 +400,68 @@ public class AdminView extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        MyBookingView MBV = new MyBookingView("","","");
+        MyBookingView MBV = new MyBookingView("","","","");
         MBV.show();
         dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+    
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a booking to edit!");
+            return;
+        }
+
+    // 2. Show the "Pop-up" message
+        int confirm = JOptionPane.showConfirmDialog(this, 
+                "Do you want to edit this booking?", "Edit Confirmation", 
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+        // 3. Extract data from the highlighted row
+            String bId = jTable1.getValueAt(selectedRow, 0).toString();
+            String customer = jTable1.getValueAt(selectedRow, 1).toString();
+            String court = jTable1.getValueAt(selectedRow, 2).toString();
+        
+        // 4. Open MyBookingView with the details
+            MyBookingView editScreen = new MyBookingView("","","","");
+            editScreen.setVisible(true);
+        
+        // 5. Close AdminView
+            this.dispose();
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+    
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a booking to cancel.");
+            return;
+        }
+
+    // Get Booking ID from the first column (index 0)
+        String bId = jTable1.getValueAt(selectedRow, 0).toString();
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Delete Booking " + bId + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            try (Connection conn = DbConnection.getConnection()) {
+                String sql = "DELETE FROM bookings WHERE booking_id = ?";
+                java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+                pst.setString(1, bId);
+                pst.executeUpdate();
+            
+                JOptionPane.showMessageDialog(this, "Booking Cancelled!");
+                loadTableData(); // Refresh the table
+            } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
