@@ -24,6 +24,34 @@ public class ViewScheduleView extends javax.swing.JFrame {
             
             refreshTable();
         });
+        
+        
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = jTable1.getSelectedRow();
+                int col = jTable1.getSelectedColumn();
+                
+                // Only act if user clicks Court 1 (Col 1) or Court 2 (Col 2)
+                if (col == 1 || col == 2) {
+                    String status = jTable1.getValueAt(row, col).toString();
+                    
+                    if (status.equalsIgnoreCase("Available")) {
+                        String time = jTable1.getValueAt(row, 0).toString();
+                        String court = (col == 1) ? "Court 1" : "Court 2";
+                        
+                        // Open Booking View with the data
+                        MyBookingView MBV = new MyBookingView(time, court);
+                        MBV.setVisible(true);
+                        dispose(); // Close the schedule window
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(null, "This slot is already booked!");
+                    }
+                }
+            }
+        });
+
+        refreshTable();
     }
     
     private void loadScheduleData() {
@@ -212,9 +240,9 @@ public class ViewScheduleView extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        MyBookingView MBV = new MyBookingView();
-        MBV.show();
-        dispose();
+        MyBookingView MBV = new MyBookingView("","");
+        MBV.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
