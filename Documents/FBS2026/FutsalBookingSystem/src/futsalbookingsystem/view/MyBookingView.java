@@ -4,6 +4,15 @@
  */
 package futsalbookingsystem.view;
 
+import futsalbookingsystem.database.DbConnection;
+
+ // Links to your DB file
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Random;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author aakirti
@@ -354,34 +363,56 @@ public class MyBookingView extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        java.util.Random rand = new java.util.Random();
+        int randomId = rand.nextInt(1000) + 240; 
+        String bookingID = String.valueOf(randomId);
+        
         String date = jComboBox2.getSelectedItem().toString();
         String startTime = jComboBox3.getSelectedItem().toString();
         String court = jTextField1.getText();
         String duration = jComboBox4.getSelectedItem().toString();
-        String price = jLabel6.getText(); // This will get "Total Price : 1000"
+        String price = jLabel6.getText();
+        String name = (this.loggedInUser != null) ? this.loggedInUser : "Guest";
         
         
         
-        java.util.Random rand = new java.util.Random();
-        int randomId = rand.nextInt(900) + 240; 
-        String bookingID = "BK-" + randomId;
+        
 
     // Show a success message
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Booking Successful " );
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                JOptionPane.showMessageDialog(this, "Database connection failed! Is MySQL turned on?");
+                return;
+            }
+
+        // SQL Query - Ensure these column names match your MySQL table exactly
+            String sql = "INSERT INTO bookings (booking_id, customer_name, court_no, booking_date, total_price) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement pst = conn.prepareStatement(sql);
         
-        BookingConfirmedView confirmedScreen = new BookingConfirmedView(
-        bookingID, 
-        this.loggedInUser, 
-        court, 
-        date, 
-        price
-        );
-    
-    confirmedScreen.setVisible(true);
-    
-    // 5. Close the current booking screen
-    this.dispose();
+            pst.setInt(1, randomId);      // Sets the ID
+            pst.setString(2, name);       // Sets Name
+            pst.setString(3, court);      // Sets Court
+            pst.setString(4, date);       // Sets Date
+            pst.setString(5, price);      // Sets Total Price
+
+            int rowsAffected = pst.executeUpdate();
+        
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, "Booking Successful! Saved to Database.");
+            
+            // 4. Open BookingConfirmedView and pass the data
+            // Ensure your BookingConfirmedView constructor matches these 5 arguments
+                BookingConfirmedView confirmed = new BookingConfirmedView(bookingID, name, court, date, price);
+                confirmed.setVisible(true);
+            
+            // 5. Close this current booking window
+                this.dispose();
+            }
+        } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
+        } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "General Error: " + e.getMessage());
+        }
     
     // Go back to the Schedule
         
