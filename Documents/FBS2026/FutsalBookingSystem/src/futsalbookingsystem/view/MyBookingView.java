@@ -4,19 +4,30 @@
  */
 package futsalbookingsystem.view;
 
+import futsalbookingsystem.database.DbConnection;
+
+ // Links to your DB file
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Random;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author aakirti
  */
 public class MyBookingView extends javax.swing.JFrame {
+    private String loggedInUser;
 
     /**
      * Creates new form MyBookingView
      */
-    public MyBookingView(String timeSlot, String courtName) {
+    public MyBookingView(String timeSlot, String courtName, String username) {
         initComponents();
         populateDates(); // <--- Add this
         populateTimes();
+        this.loggedInUser = username;
         
         jComboBox4.removeAllItems();
         jComboBox4.addItem("1 Hour");
@@ -341,7 +352,7 @@ public class MyBookingView extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        ViewScheduleView VSV = new ViewScheduleView();
+        ViewScheduleView VSV = new ViewScheduleView("");
         VSV.show();
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -352,18 +363,59 @@ public class MyBookingView extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        java.util.Random rand = new java.util.Random();
+        int randomId = rand.nextInt(1000) + 240; 
+        String bookingID = String.valueOf(randomId);
+        
         String date = jComboBox2.getSelectedItem().toString();
         String startTime = jComboBox3.getSelectedItem().toString();
         String court = jTextField1.getText();
         String duration = jComboBox4.getSelectedItem().toString();
+        String price = jLabel6.getText();
+        String name = (this.loggedInUser != null) ? this.loggedInUser : "Guest";
+        
+        
+        
+        
 
     // Show a success message
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Booking Successful!\nDate: " + date + "\nCourt: " + court + "\nTime: " + startTime + "Duration: " + duration + "\n");
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                JOptionPane.showMessageDialog(this, "Database connection failed! Is MySQL turned on?");
+                return;
+            }
+
+        // SQL Query - Ensure these column names match your MySQL table exactly
+            String sql = "INSERT INTO bookings (booking_id, customer_name, court_no, booking_date, total_price) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement pst = conn.prepareStatement(sql);
+        
+            pst.setInt(1, randomId);      // Sets the ID
+            pst.setString(2, name);       // Sets Name
+            pst.setString(3, court);      // Sets Court
+            pst.setString(4, date);       // Sets Date
+            pst.setString(5, price);      // Sets Total Price
+
+            int rowsAffected = pst.executeUpdate();
+        
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, "Booking Successful! Saved to Database.");
+            
+            // 4. Open BookingConfirmedView and pass the data
+            // Ensure your BookingConfirmedView constructor matches these 5 arguments
+                BookingConfirmedView confirmed = new BookingConfirmedView(bookingID, name, court, date, price);
+                confirmed.setVisible(true);
+            
+            // 5. Close this current booking window
+                this.dispose();
+            }
+        } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
+        } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "General Error: " + e.getMessage());
+        }
     
     // Go back to the Schedule
-        new ViewScheduleView().setVisible(true);
-        this.dispose();
+        
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox4ActionPerformed
@@ -401,7 +453,7 @@ public class MyBookingView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MyBookingView("","").setVisible(true);
+                new MyBookingView("","","").setVisible(true);
             }
         });
     }

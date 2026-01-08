@@ -13,8 +13,29 @@ public class BookingConfirmedView extends javax.swing.JFrame {
     /**
      * Creates new form BookingConfirmedView
      */
-    public BookingConfirmedView() {
+    public BookingConfirmedView(String bookingID, String name, String court, String date, String price) {
         initComponents();
+        
+        jTextField1.setText(bookingID);
+        jTextField2.setText(name);
+        jTextField3.setText(court);
+        jTextField4.setText(date);
+        jTextField5.setText(price);
+        
+        // Make them uneditable so users can't change the confirmation details
+        jTextField1.setEditable(false);
+        jTextField2.setEditable(false);
+        jTextField3.setEditable(false);
+        jTextField4.setEditable(false);
+        jTextField5.setEditable(false);
+        
+        
+        java.awt.Color lightGray = new java.awt.Color(240, 240, 240);
+        jTextField1.setBackground(lightGray);
+        jTextField2.setBackground(lightGray);
+        jTextField3.setBackground(lightGray);
+        jTextField4.setBackground(lightGray);
+        jTextField5.setBackground(lightGray);
     }
 
     /**
@@ -230,6 +251,8 @@ public class BookingConfirmedView extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        new DashboardView("User").setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
@@ -262,7 +285,7 @@ public class BookingConfirmedView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new BookingConfirmedView().setVisible(true);
+                new BookingConfirmedView("","","","","").setVisible(true);
             }
         });
     }

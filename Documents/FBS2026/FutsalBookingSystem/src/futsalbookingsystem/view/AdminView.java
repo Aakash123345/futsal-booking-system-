@@ -306,7 +306,7 @@ public class AdminView extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        ViewScheduleView VSV = new ViewScheduleView();
+        ViewScheduleView VSV = new ViewScheduleView("");
         VSV.show();
         dispose();
         
@@ -314,7 +314,7 @@ public class AdminView extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        MyBookingView MBV = new MyBookingView("","");
+        MyBookingView MBV = new MyBookingView("","","");
         MBV.show();
         dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
