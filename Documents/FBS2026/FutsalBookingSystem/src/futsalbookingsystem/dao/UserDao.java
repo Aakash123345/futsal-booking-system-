@@ -9,6 +9,7 @@ import futsalbookingsystem.model.UserData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -54,6 +55,42 @@ public class UserDao {
 //            return false;
 
         }
+    }
+
+//    public TableModel getScheduleModel() {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
+    
+    public javax.swing.table.DefaultTableModel getScheduleModel() {
+        java.util.Vector<String> columnNames = new java.util.Vector<>();
+        columnNames.add("Time Slot");
+        columnNames.add("Court 1 Status");
+        columnNames.add("Court 2 Status");
+
+        java.util.Vector<java.util.Vector<Object>> data = new java.util.Vector<>();
+
+        try (Connection conn = DbConnection.getConnection()) {
+            String sql = "SELECT time_slot, court1_user, court2_user FROM schedules";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                java.util.Vector<Object> row = new java.util.Vector<>();
+                row.add(rs.getString("time_slot"));
+                
+                String c1 = rs.getString("court1_user");
+                row.add((c1 == null || c1.trim().isEmpty()) ? "Available" : "Booked (" + c1 + ")");
+                
+                String c2 = rs.getString("court2_user");
+                row.add((c2 == null || c2.trim().isEmpty()) ? "Available" : "Booked (" + c2 + ")");
+                
+                data.add(row);
+            }
+        } catch (Exception e) {
+            System.out.println("Schedule Fetch Error: " + e.getMessage());
+            return new javax.swing.table.DefaultTableModel(new String[]{"Time Slot", "Court 1 Status", "Court 2 Status"}, 0);
+        }
+        return new javax.swing.table.DefaultTableModel(data, columnNames);
     }
     
 }

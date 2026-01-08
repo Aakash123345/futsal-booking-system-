@@ -154,7 +154,7 @@ public class LoginView extends javax.swing.JFrame {
             futsalbookingsystem.dao.UserDao dao = new futsalbookingsystem.dao.UserDao();
         
             if (dao.checkLogin(username, password)) {
-                DashboardView DV = new DashboardView();
+                DashboardView DV = new DashboardView(username);
                 DV.setVisible(true);
                 this.dispose();
             } else {

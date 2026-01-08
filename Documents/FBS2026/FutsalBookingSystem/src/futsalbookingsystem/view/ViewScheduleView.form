@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
   </Properties>
@@ -159,31 +159,10 @@
         <Component class="javax.swing.JTable" name="jTable1">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="3" rowCount="6">
-                <Column editable="true" title="Time Slot" type="java.lang.Object">
-                  <Data value="17:00 - 18:00"/>
-                  <Data value="13:00 - 18:00"/>
-                  <Data value="18:00-18:00"/>
-                  <Data value="15:00 - 16:00"/>
-                  <Data value="14:00 - 13:00"/>
-                  <Data value="18:00 - 19:00"/>
-                </Column>
-                <Column editable="true" title="Court 1 Status" type="java.lang.Object">
-                  <Data value="Available"/>
-                  <Data value="Available"/>
-                  <Data value="Available"/>
-                  <Data value="Available"/>
-                  <Data value="Available"/>
-                  <Data value="Available"/>
-                </Column>
-                <Column editable="true" title="Court 2 status" type="java.lang.Object">
-                  <Data value="Ram kapoor"/>
-                  <Data value="Available"/>
-                  <Data value="Availble"/>
-                  <Data value="Available"/>
-                  <Data value="Booked(Aashu sharma)"/>
-                  <Data value="null"/>
-                </Column>
+              <Table columnCount="3" rowCount="13">
+                <Column editable="true" title="Time Slot" type="java.lang.Object"/>
+                <Column editable="true" title="Court 1 Status" type="java.lang.Object"/>
+                <Column editable="true" title="Court 2 status" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -198,7 +177,7 @@
                   <Editor/>
                   <Renderer/>
                 </Column>
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                   <Title/>
                   <Editor/>
                   <Renderer/>
