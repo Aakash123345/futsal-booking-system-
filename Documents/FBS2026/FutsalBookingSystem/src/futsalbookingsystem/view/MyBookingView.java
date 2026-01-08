@@ -9,14 +9,16 @@ package futsalbookingsystem.view;
  * @author aakirti
  */
 public class MyBookingView extends javax.swing.JFrame {
+    private String loggedInUser;
 
     /**
      * Creates new form MyBookingView
      */
-    public MyBookingView(String timeSlot, String courtName) {
+    public MyBookingView(String timeSlot, String courtName, String username) {
         initComponents();
         populateDates(); // <--- Add this
         populateTimes();
+        this.loggedInUser = username;
         
         jComboBox4.removeAllItems();
         jComboBox4.addItem("1 Hour");
@@ -341,7 +343,7 @@ public class MyBookingView extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        ViewScheduleView VSV = new ViewScheduleView();
+        ViewScheduleView VSV = new ViewScheduleView("");
         VSV.show();
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -356,14 +358,33 @@ public class MyBookingView extends javax.swing.JFrame {
         String startTime = jComboBox3.getSelectedItem().toString();
         String court = jTextField1.getText();
         String duration = jComboBox4.getSelectedItem().toString();
+        String price = jLabel6.getText(); // This will get "Total Price : 1000"
+        
+        
+        
+        java.util.Random rand = new java.util.Random();
+        int randomId = rand.nextInt(900) + 240; 
+        String bookingID = "BK-" + randomId;
 
     // Show a success message
         javax.swing.JOptionPane.showMessageDialog(this, 
-            "Booking Successful!\nDate: " + date + "\nCourt: " + court + "\nTime: " + startTime + "Duration: " + duration + "\n");
+            "Booking Successful " );
+        
+        BookingConfirmedView confirmedScreen = new BookingConfirmedView(
+        bookingID, 
+        this.loggedInUser, 
+        court, 
+        date, 
+        price
+        );
+    
+    confirmedScreen.setVisible(true);
+    
+    // 5. Close the current booking screen
+    this.dispose();
     
     // Go back to the Schedule
-        new ViewScheduleView().setVisible(true);
-        this.dispose();
+        
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox4ActionPerformed
@@ -401,7 +422,7 @@ public class MyBookingView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MyBookingView("","").setVisible(true);
+                new MyBookingView("","","").setVisible(true);
             }
         });
     }

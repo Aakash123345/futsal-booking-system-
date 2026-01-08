@@ -13,13 +13,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ViewScheduleView extends javax.swing.JFrame {
 
+    private final String loggedInUser;
+
     /**
      * Creates new form ViewScheduleView
      */
-    public ViewScheduleView() {
+    public ViewScheduleView(String username) {
         initComponents();
         loadScheduleData();
         refreshTable();
+        this.loggedInUser = username;
         java.awt.EventQueue.invokeLater(() -> {
             
             refreshTable();
@@ -41,7 +44,7 @@ public class ViewScheduleView extends javax.swing.JFrame {
                         String court = (col == 1) ? "Court 1" : "Court 2";
                         
                         // Open Booking View with the data
-                        MyBookingView MBV = new MyBookingView(time, court);
+                        MyBookingView MBV = new MyBookingView(time, court,username);
                         MBV.setVisible(true);
                         dispose(); // Close the schedule window
                     } else {
@@ -240,7 +243,7 @@ public class ViewScheduleView extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        MyBookingView MBV = new MyBookingView("","");
+        MyBookingView MBV = new MyBookingView("","","");
         MBV.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -282,7 +285,7 @@ public class ViewScheduleView extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ViewScheduleView().setVisible(true);
+                new ViewScheduleView( "Guest").setVisible(true);
             }
         });
     }

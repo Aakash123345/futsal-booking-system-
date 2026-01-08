@@ -24,13 +24,13 @@ public class DashboardController {
 
         // Listen for button clicks on the Dashboard
         this.view.getBtnSchedule().addActionListener(e -> {
-            new ViewScheduleView().setVisible(true);
+            new ViewScheduleView("").setVisible(true);
             view.dispose();
         });
 
         // Logic for "My Booking" Button
         this.view.getBtnBooking().addActionListener(e -> {
-            new MyBookingView().setVisible(true);
+            new MyBookingView("","","").setVisible(true);
             view.dispose();
         });
 
@@ -45,12 +45,12 @@ public class DashboardController {
     }
 
     private void openBooking() {
-        new MyBookingView().setVisible(true);
+        new MyBookingView("","","").setVisible(true);
         view.dispose();
     }
 
     private void openSchedule() {
-        new ViewScheduleView().setVisible(true);
+        new ViewScheduleView("").setVisible(true);
         view.dispose();
     }
 
