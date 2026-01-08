@@ -30,7 +30,7 @@ public class DashboardController {
 
         // Logic for "My Booking" Button
         this.view.getBtnBooking().addActionListener(e -> {
-            new MyBookingView("","","").setVisible(true);
+            new MyBookingView("","","","").setVisible(true);
             view.dispose();
         });
 
@@ -45,7 +45,7 @@ public class DashboardController {
     }
 
     private void openBooking() {
-        new MyBookingView("","","").setVisible(true);
+        new MyBookingView("","","","").setVisible(true);
         view.dispose();
     }
 

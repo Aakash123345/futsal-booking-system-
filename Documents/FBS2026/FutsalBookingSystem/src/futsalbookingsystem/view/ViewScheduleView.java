@@ -44,7 +44,7 @@ public class ViewScheduleView extends javax.swing.JFrame {
                         String court = (col == 1) ? "Court 1" : "Court 2";
                         
                         // Open Booking View with the data
-                        MyBookingView MBV = new MyBookingView(time, court,username);
+                        MyBookingView MBV = new MyBookingView("","","","");
                         MBV.setVisible(true);
                         dispose(); // Close the schedule window
                     } else {
@@ -147,6 +147,11 @@ public class ViewScheduleView extends javax.swing.JFrame {
         });
 
         jButton5.setText("Logout");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -243,7 +248,7 @@ public class ViewScheduleView extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        MyBookingView MBV = new MyBookingView("","","");
+        MyBookingView MBV = new MyBookingView("","","","");
         MBV.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -254,6 +259,25 @@ public class ViewScheduleView extends javax.swing.JFrame {
         AV.show();
         dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        int response = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout Confirmation", 
+            javax.swing.JOptionPane.YES_NO_OPTION, 
+            javax.swing.JOptionPane.QUESTION_MESSAGE);
+
+    // 2. If user clicks "Yes"
+        if (response == javax.swing.JOptionPane.YES_OPTION) {
+        // Replace 'LoginView' with the actual name of your Login JFrame class
+            LoginView login = new LoginView(); 
+            login.setVisible(true);
+        
+        // 3. Close the current Dashboard
+            this.dispose(); 
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
