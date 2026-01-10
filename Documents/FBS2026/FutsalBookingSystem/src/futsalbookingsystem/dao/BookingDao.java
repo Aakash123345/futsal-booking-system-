@@ -15,14 +15,16 @@ import futsalbookingsystem.database.DbConnection;
  */
 public class BookingDao {
     
-    
     public DefaultTableModel getScheduleData() {
-        Vector<String> columnNames = new Vector<>();
+    
+    
+//    public DefaultTableModel getScheduleData() {
+       Vector<String> columnNames = new Vector<>();
         columnNames.add("Time Slot");
-        columnNames.add("Court 1 Status");
+       columnNames.add("Court 1 Status");
         columnNames.add("Court 2 Status");
 
-        Vector<Vector<Object>> data = new Vector<>();
+       Vector<Vector<Object>> data = new Vector<>();
 
         // USE THE DB CONNECTION CLASS INSTEAD OF HARDCODING
         try (Connection conn = DbConnection.getConnection()) {
@@ -47,6 +49,8 @@ public class BookingDao {
             // Return empty table with headers so the UI doesn't crash
             return new DefaultTableModel(new String[]{"Time Slot", "Court 1 Status", "Court 2 Status"}, 0);
         }
-        return new DefaultTableModel(data, columnNames);
+       return new DefaultTableModel(data, columnNames);
     }
-}    
+    
+}
+   

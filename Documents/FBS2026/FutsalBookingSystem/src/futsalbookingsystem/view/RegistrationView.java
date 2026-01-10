@@ -66,6 +66,8 @@ public class RegistrationView extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
+        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 102));
         jLabel2.setText("Create new Account");
 
         jTextField1.setText("Enter your name");
@@ -76,7 +78,9 @@ public class RegistrationView extends javax.swing.JFrame {
 
         jTextField4.setText("Password");
 
+        jButton1.setBackground(new java.awt.Color(0, 102, 204));
         jButton1.setText("Continue");
+        jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -85,7 +89,9 @@ public class RegistrationView extends javax.swing.JFrame {
 
         jLabel3.setText("Already have an Account?");
 
+        jButton2.setBackground(new java.awt.Color(0, 102, 255));
         jButton2.setText("Login");
+        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -98,9 +104,6 @@ public class RegistrationView extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(127, 127, 127)
-                        .addComponent(jLabel2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(59, 59, 59)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -120,15 +123,18 @@ public class RegistrationView extends javax.swing.JFrame {
                         .addGap(45, 45, 45)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)))
-                .addContainerGap(89, Short.MAX_VALUE))
+                        .addComponent(jButton2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel2)))
+                .addContainerGap(102, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
+                .addGap(55, 55, 55)
                 .addComponent(jLabel2)
-                .addGap(46, 46, 46)
+                .addGap(38, 38, 38)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -142,7 +148,7 @@ public class RegistrationView extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jButton2))
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(154, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 0, 370, 520));
@@ -159,31 +165,47 @@ public class RegistrationView extends javax.swing.JFrame {
         String email = jTextField2.getText();
         String phone = jTextField3.getText();
         String pass = jTextField4.getText();
-
-    // 2. Strict Validation: Check for empty fields OR placeholder text
-        if (name.isEmpty() || name.equals("Enter your name") || 
-            email.isEmpty() || email.equals("Email") || 
-            phone.isEmpty() || phone.equals("Phone Number") || 
-            pass.isEmpty() || pass.equals("Password")) {
         
-            javax.swing.JOptionPane.showMessageDialog(this, "Please fill in all fields with your actual information.");
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String phoneRegex = "^[0-9]{10}$";
+        
+        
+        if (name.isEmpty() || name.equals("Enter your name")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Name cannot be empty.");
             return;
         }
 
-    // 3. Create the UserData object
+        if (!email.matches(emailRegex) || email.equals("Email")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid email address (e.g., name@example.com).");
+            return;
+        }
+
+        if (!phone.matches(phoneRegex) || phone.equals("Phone Number")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid 10-digit phone number.");
+            return;
+        }
+
+        if (pass.length() < 6 || pass.equals("Password")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Password must be at least 6 characters long.");
+            return;
+        }
+
+    // 4. Create the UserData object (If all validations pass)
         futsalbookingsystem.model.UserData user = new futsalbookingsystem.model.UserData(name, email, phone, pass);
 
-    // 4. Call the UserDao to save to MySQL
+    // 5. Database Interaction
         futsalbookingsystem.dao.UserDao dao = new futsalbookingsystem.dao.UserDao();
         if (dao.registerUser(user)) {
             javax.swing.JOptionPane.showMessageDialog(this, "Registration Successful!");
             new LoginView().setVisible(true);
             this.dispose();
         } else {
-        // If it fails now, it is likely a database connection or SQL column name issue
-            javax.swing.JOptionPane.showMessageDialog(this, "Registration Failed. Check if the database is running or the email is already used.");
+            javax.swing.JOptionPane.showMessageDialog(this, "Registration Failed. Email might already be in use.");
         }
-       
+
+
+    // 2. Strict Validation: Check for empty fields OR placeholder text
+          
        
     }//GEN-LAST:event_jButton1ActionPerformed
 
