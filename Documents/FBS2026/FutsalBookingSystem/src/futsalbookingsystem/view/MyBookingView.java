@@ -27,6 +27,7 @@ public class MyBookingView extends javax.swing.JFrame {
      */
     public MyBookingView(String bId,String timeSlot, String courtName, String username) {
         initComponents();
+        populateCourts();
         populateDates(); // <--- Add this
         populateTimes();
         this.loggedInUser = username;
@@ -37,13 +38,16 @@ public class MyBookingView extends javax.swing.JFrame {
             this.editingID = bId;
         jButton6.setText("Update Booking"); // Change button text
         }
+        if (courtName != null && !courtName.isEmpty()) {
+            jComboBox1.setSelectedItem(courtName);
+        }   
         
         jComboBox4.removeAllItems();
         jComboBox4.addItem("1 Hour");
         jComboBox4.addItem("2 Hours");
         jComboBox4.addItem("3 Hours");
         
-        jTextField1.setText(courtName); 
+        jComboBox1.setSelectedItem(courtName); 
         
         // Auto-fill the Time Slot in jComboBox3
         // Note: Make sure the text in your DB matches the items in your ComboBox exactly
@@ -51,10 +55,16 @@ public class MyBookingView extends javax.swing.JFrame {
         jComboBox4.setSelectedIndex(0);
         
         // Optional: Make the court field uneditable so they don't change it by mistake
-        jTextField1.setEditable(true);
+        
         this.loggedInUser = "Guest";
         
         updatePrice();
+    }
+    
+    private void populateCourts() {
+        jComboBox1.removeAllItems();
+        jComboBox1.addItem("Court 1");
+        jComboBox1.addItem("Court 2");
     }
     private void populateDates() {
         jComboBox2.removeAllItems(); 
@@ -65,7 +75,7 @@ public class MyBookingView extends javax.swing.JFrame {
     }
 
     private void populateTimes() {
-        String[] times = {"07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM"};
+        String[] times = {"07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM","04:00 PM","05:00 PM","06:00 PM","07:00 PM","08:00 PM"};
         jComboBox3.removeAllItems(); // Start Time
     // If you add a jComboBox4 for End Time, clear it here too
         for (String t : times) {
@@ -106,7 +116,6 @@ public class MyBookingView extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
@@ -117,6 +126,7 @@ public class MyBookingView extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jComboBox4 = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -131,7 +141,7 @@ public class MyBookingView extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(150, 150, 150)
+                .addGap(81, 81, 81)
                 .addComponent(jLabel7)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -160,6 +170,7 @@ public class MyBookingView extends javax.swing.JFrame {
         });
 
         jButton3.setText("My Booking");
+        jButton3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -208,14 +219,7 @@ public class MyBookingView extends javax.swing.JFrame {
 
         jLabel1.setText("Court Selection");
 
-        jLabel2.setText("Court 1");
-
-        jTextField1.setText("court 2");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
+        jLabel2.setText("Court ");
 
         jLabel3.setText("Date Selection");
 
@@ -228,9 +232,12 @@ public class MyBookingView extends javax.swing.JFrame {
         jLabel5.setText("Duration");
 
         jLabel6.setFont(new java.awt.Font("Helvetica Neue", 0, 36)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(0, 0, 102));
         jLabel6.setText("Total Price : 1000");
 
+        jButton6.setBackground(new java.awt.Color(0, 102, 255));
         jButton6.setText("Confirm Booking");
+        jButton6.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -250,6 +257,8 @@ public class MyBookingView extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
         jLabel9.setText("1 hour charge Rs 1000");
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -265,20 +274,22 @@ public class MyBookingView extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(jLabel8))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel6)
                                 .addGap(171, 171, 171))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(37, 37, 37)
-                                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(37, 37, 37)
+                                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jComboBox2, 0, 163, Short.MAX_VALUE)
+                                                .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -312,7 +323,7 @@ public class MyBookingView extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
@@ -383,19 +394,16 @@ public class MyBookingView extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         
         
 
         String date = jComboBox2.getSelectedItem().toString();
-        String court = jTextField1.getText();
+        String court = jComboBox1.getSelectedItem().toString();
         String price = jLabel6.getText();
         String name = (this.loggedInUser != null) ? this.loggedInUser : "Guest";
+        String timeSlot = jComboBox3.getSelectedItem().toString();
     
     // Generate a new ID only if we aren't editing
         int randomId = new java.util.Random().nextInt(1000) + 240; 
@@ -422,7 +430,8 @@ public class MyBookingView extends javax.swing.JFrame {
             pst.setString(1, name);      // customer_name
             pst.setString(2, court);     // court_no
             pst.setString(3, date);      // booking_date
-            pst.setString(4, price);     // total_price
+            pst.setString(4, price); 
+            pst.setString(5, timeSlot);// total_price
             pst.setString(5, bookingID); // booking_id (The WHERE clause or the last VALUE)
 
             int rowsAffected = pst.executeUpdate();
@@ -493,6 +502,7 @@ public class MyBookingView extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
@@ -507,6 +517,5 @@ public class MyBookingView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

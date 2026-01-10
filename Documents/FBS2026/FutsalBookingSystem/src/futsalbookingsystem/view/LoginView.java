@@ -62,6 +62,7 @@ public class LoginView extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 102));
         jLabel2.setText("Login Your Account");
 
         txtUsername.setText("Name");
@@ -73,7 +74,9 @@ public class LoginView extends javax.swing.JFrame {
 
         txtPassword.setText("Password");
 
+        jButton1.setBackground(new java.awt.Color(0, 102, 255));
         jButton1.setText("Continue");
+        jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -82,7 +85,9 @@ public class LoginView extends javax.swing.JFrame {
 
         jLabel3.setText("Create a account ?");
 
+        jButton2.setBackground(new java.awt.Color(0, 102, 255));
         jButton2.setText("Sign up");
+        jButton2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -145,21 +150,52 @@ public class LoginView extends javax.swing.JFrame {
         String password = txtPassword.getText();
     
     // Check if fields are empty OR still contain placeholder text
-        if (username.isEmpty() || username.equals("Name") || 
-            password.isEmpty() || password.equals("Password")) {
-        
-            javax.swing.JOptionPane.showMessageDialog(this, "Please enter both username and password");
-        } else {
-        // Call the UserDao to check the database
+        if (username.isEmpty() || username.equals("Name")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Please enter your username.", 
+                    "Login Warning", 
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            txtUsername.requestFocus(); // Puts the cursor back in the field
+            return;
+        }
+
+        if (password.isEmpty() || password.equals("Password")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Please enter your password.", 
+                    "Login Warning", 
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            txtPassword.requestFocus();
+            return;
+        }
+
+    // 3. Database Authentication
+        try {
             futsalbookingsystem.dao.UserDao dao = new futsalbookingsystem.dao.UserDao();
         
+        // dao.checkLogin should return true if credentials match
             if (dao.checkLogin(username, password)) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Login Successful! Welcome " + username);
+            
+            // Navigate to Dashboard
                 DashboardView DV = new DashboardView(username);
                 DV.setVisible(true);
-                this.dispose();
+                this.dispose(); 
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Invalid Username or password", "Login error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            // Error for wrong credentials
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                        "Invalid Username or Password. Please try again.", 
+                        "Login Failed", 
+                        javax.swing.JOptionPane.ERROR_MESSAGE);
+            
+            // Optional: Clear password field for retry
+                txtPassword.setText("");
             }
+        } catch (Exception e) {
+        // Error for database connection issues
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Database Connection Error: " + e.getMessage(), 
+                    "System Error", 
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         
     }//GEN-LAST:event_jButton1ActionPerformed
