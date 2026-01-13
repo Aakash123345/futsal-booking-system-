@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -76,6 +77,9 @@ public class AdminView extends javax.swing.JFrame {
             // Add row to table model
                 model.addRow(new Object[]{id, name, court, date, price});
             }
+            
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+            jTable1.setRowSorter(sorter);
             conn.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading data: " + e.getMessage());
@@ -115,6 +119,7 @@ public class AdminView extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -197,7 +202,7 @@ public class AdminView extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 102));
         jLabel3.setText("Admin Dashboard");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, 260, 50));
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 50, 260, 50));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -230,7 +235,7 @@ public class AdminView extends javax.swing.JFrame {
                 .addContainerGap(30, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 170, 170, 100));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 110, 170, 100));
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -264,7 +269,7 @@ public class AdminView extends javax.swing.JFrame {
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 170, 170, 100));
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 110, 170, 100));
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -297,12 +302,12 @@ public class AdminView extends javax.swing.JFrame {
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 170, 170, 100));
+        getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 110, 170, 100));
 
         jLabel8.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 102));
         jLabel8.setText("Manage all bookings");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 290, -1, -1));
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 250, -1, -1));
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -365,6 +370,25 @@ public class AdminView extends javax.swing.JFrame {
         );
 
         getContentPane().add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 340, 580, 240));
+
+        jTextField1.setForeground(new java.awt.Color(204, 204, 204));
+        jTextField1.setText("Search by bookingId");
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextField1FocusGained(evt);
+            }
+        });
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
+            }
+        });
+        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 300, 340, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -468,6 +492,33 @@ public class AdminView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        // TODO add your handling code here:
+        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        jTable1.setRowSorter(sorter);
+    
+        String searchText = jTextField1.getText();
+    
+    // This line filters the table based on column 0 (Booking ID)
+    // "(?i)" makes it case-insensitive (ignores capital vs small letters)
+        sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + searchText, 0));
+    }//GEN-LAST:event_jTextField1KeyReleased
+
+    private void jTextField1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusGained
+        // TODO add your handling code here:
+        
+        if (jTextField1.getText().equals("Search by bookingId")) {
+            jTextField1.setText("");
+            jTextField1.setForeground(java.awt.Color.BLACK); // Set text color to black when typing
+        }
+    }//GEN-LAST:event_jTextField1FocusGained
+
     /**
      * @param args the command line arguments
      */
@@ -527,5 +578,6 @@ public class AdminView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
